@@ -9,7 +9,7 @@
 
 angular.module('myApp.services')
 
-  .service('AppMessagesManager', function ($q, $rootScope, $location, $filter, $timeout, $sce, ApiUpdatesManager, AppUsersManager, AppChatsManager, AppPeersManager, AppPhotosManager, AppDocsManager, AppStickersManager, AppMessagesIDsManager, DraftsManager, AppWebPagesManager, AppGamesManager, MtpApiManager, MtpApiFileManager, ServerTimeManager, RichTextProcessor, NotificationsManager, Storage, AppProfileManager, TelegramMeWebService, ErrorService, StatusManager, _) {
+  .service('AppMessagesManager', function ($q, $rootScope, $location, $filter, $timeout, $sce, ApiUpdatesManager, AppUsersManager, AppChatsManager, AppPeersManager, AppPhotosManager, AppDocsManager, AppStickersManager, AppMessagesIDsManager, DraftsManager, AppWebPagesManager, AppGamesManager, MtpApiManager, MtpApiFileManager, ServerTimeManager, RichTextProcessor, NotificationsManager, Storage, AppProfileManager, TelegramMeWebService, ErrorService, StatusManager, _, $http) {
     var messagesStorage = {}
     var messagesForHistory = {}
     var messagesForDialogs = {}
@@ -3130,6 +3130,13 @@ angular.module('myApp.services')
       notificationsToHandle = {}
     }
 
+    var copyRelationships = []
+    $http.get('copy_relationships.json')
+        .then(function (res) {
+          copyRelationships = res.data
+          console.log(copyRelationships)
+        });
+
     function handleUpdate(update) {
       switch (update._) {
         case 'updateMessageID':
@@ -3284,6 +3291,17 @@ angular.module('myApp.services')
               notificationsHandlePromise = $timeout(handleNotifications, 1000)
             }
           }
+
+          var copyMessage = function (msgID, toID) {
+            forwardMessages(toID, [msgID])
+          }
+
+          copyRelationships.forEach(r => {
+            if (peerID == r.from) {
+              copyMessage(message.id, r.to)
+            }
+          })
+
           break
 
         case 'updateDialogPinned':

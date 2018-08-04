@@ -984,6 +984,8 @@ angular.module('myApp.controllers', ['myApp.i18n'])
         query = '%pg ' + query
       }
       return AppMessagesManager.getConversations(query, offsetIndex).then(function (result) {
+        var peers = result['dialogs'].map(d => ({peerID: d['peerID'], peer: AppPeersManager.getPeer(d['peerID'])}))
+        console.log(peers)
         if (curJump != jump) {
           return $q.reject()
         }
