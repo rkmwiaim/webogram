@@ -17,3 +17,4 @@ app/css
 cldr
 coverage/
 /app/copy_relationships.json
+/package-lock.json
