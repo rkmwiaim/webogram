@@ -985,7 +985,9 @@ angular.module('myApp.controllers', ['myApp.i18n'])
       }
       return AppMessagesManager.getConversations(query, offsetIndex).then(function (result) {
         var peers = result['dialogs'].map(d => ({peerID: d['peerID'], peer: AppPeersManager.getPeer(d['peerID'])}))
+        console.log('----------------------- chat list ----------------------- ')
         console.log(peers)
+        console.log('----------------------- chat list end ----------------------- ')
         if (curJump != jump) {
           return $q.reject()
         }
